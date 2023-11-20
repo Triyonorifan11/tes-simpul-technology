@@ -1,95 +1,89 @@
 <script setup>
 import IconSearch from '../components/icons/IconSearch.vue';
+import IconThunder from '../components/icons/IconThunder.vue';
+import IconChat from '../components/icons/IconChat.vue';
+import IconChatactive from '../components/icons/IconChatactive.vue';
+import IconItem from '../components/icons/IconItem.vue';
+
 </script>
 <script>
 export default {
+    data() {
+        return {
+            isChatBox: false,
+        }
+    },
     mounted() {
-        this.dropdown();
+        // this.dropdown();
+        document.querySelector("#submenu").classList.toggle("hidden");
     },
     methods: {
-        dropdown() {
-            document.querySelector("#submenu").classList.toggle("hidden");
-            document.querySelector("#arrow").classList.toggle("rotate-180");
+        thunderOpen() {
+            const textthunder = document.querySelectorAll(".text-thunder")
+            document.querySelector(".icon1").classList.toggle("translate-x-28");
+            document.querySelector(".icon2").classList.toggle("translate-x-14");
+            textthunder.forEach(item => {
+                item.classList.toggle('hidden')
+            })
         },
 
-        openSidebar() {
-            document.querySelector(".sidebar").classList.toggle("hidden");
+        openChatbox() {
+            const textthunder = document.querySelectorAll(".text-thunder")
+            document.querySelector(".icon2").classList.remove("translate-x-14");
+            document.querySelector(".icon1").classList.remove("translate-x-28");
+            document.querySelector(".icon1").classList.toggle("translate-x-0");
+            document.querySelector(".icon2").classList.toggle("translate-x-0");
+            document.querySelector(".icon3").classList.toggle("hidden");
+            textthunder.forEach(item => {
+                item.classList.toggle('hidden')
+            })
+            this.isChatBox ? this.isChatBox = false : this.isChatBox = true
         }
+
     },
 }
 </script>
 
 <template>
-    <div class="flex min-h-screen">
-        
-            <div class="bg-primary">
-                <span class="lg:hidden sm:block absolute text-white text-4xl top-5 right-4 cursor-pointer" @click="openSidebar()">
-                    <i class="bi bi-filter-left px-2 bg-gray-900 rounded-md"></i>
-                </span>
-                <div class="hidden lg:block md:block sidebar min-h-screen fixed lg:sticky top-0 bottom-0 lg:left-0 p-2 w-[300px] overflow-y-auto text-center bg-gray-900">
-                    <div class="text-gray-100 text-xl">
-                        <div class="p-2.5 mt-1 flex items-center">
-                            <h1 class="font-bold text-gray-200 text-[15px] ml-3">Simple Quicks</h1>
-                            <i class="bi bi-x cursor-pointer ml-28 lg:hidden md:hidden" @click="openSidebar()"></i>
-                        </div>
-                        <div class="my-2 bg-gray-600 h-[1px]"></div>
-                    </div>
-                    <div class="p-2.5 flex items-center rounded-md px-4 duration-300 cursor-pointer bg-gray-700 text-white">
-                        <i class="bi bi-search text-sm"></i>
-                        <input type="text" placeholder="Search" class="text-[15px] ml-4 w-full bg-transparent focus:outline-none" />
-                    </div>
-                    <ul>
-                        <li>
-                            <div
-                                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-primary text-white">
-                                <i class="bi bi-house-door-fill"></i>
-                                <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
-                            </div>
-                        </li>
-                        <li>
-                            <div
-                                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-primary text-white">
-                                <i class="bi bi-bookmark-fill"></i>
-                                <span class="text-[15px] ml-4 text-gray-200 font-bold">Bookmark</span>
-                            </div>
-                        </li>
-                        <div class="my-4 bg-gray-600 h-[1px]"></div>
-                        <li>
-                            <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-primary text-white"
-                                @click="dropdown()">
-                                <i class="bi bi-chat-left-text-fill"></i>
-                                <div class="flex justify-between w-full items-center">
-                                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Chatbox</span>
-                                    <span class="text-sm " id="arrow">
-                                        <i class="bi bi-chevron-down"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold" id="submenu">
-                                <h1 class="cursor-pointer p-2 hover:bg-primary rounded-md mt-1">
-                                    Group
-                                </h1>
-                                <h1 class="cursor-pointer p-2 hover:bg-primary rounded-md mt-1">
-                                    Friends
-                                </h1>
-                            </div>
-                        </li>
-                        <li>
-                            <div
-                                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-primary text-white">
-                                <i class="bi bi-box-arrow-in-right"></i>
-                                <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
-                            </div>
-                        </li>
-                    </ul>
+    <div class=" w-full overflow-auto">
+        <div class="bg-grey sticky top-0 p-[19px] lg:block hidden">
+            <div class="flex cursor-pointer">
+                <IconSearch />
+                <div class="w-full sm:w-[60%] lg:w-[50%] px-6">
+                    <input type="search" class=" w-full bg-transparent outline-none border-b-2 border-gray-500 text-white"
+                        placeholder="search">
                 </div>
             </div>
-        
-        <main class="bg-danger w-full overflow-auto">
-            <h1 class="h-[1000px]">HelloWorld</h1>
+        </div>
+        <main class="mainContent h-[1000px] relative" id="mainContent">
+
         </main>
+        <!-- button thunder -->
+        <div class="relative font-lato">
+            <div class="flex justify-center items-center fixed  right-5 bottom-5">
+                <div class="bg-purple absolute min-w-[600px] bottom-20 right-0 min-h-[500px]  rounded-md px-5 py-2" v-if="isChatBox">p</div>
+                <div class="flex">
+                    <div class="relative w-14 flex justify-center  transition-all ease-in-out translate-x-28  icon1">
+                        <p class="absolute -top-5 hidden text-thunder">Task</p>
+                        <IconItem class="w-14" />
+                    </div>
+                    <div class="w-14 relative flex justify-center transition-all ease-in-out translate-x-14 icon2"
+                        @click="openChatbox()">
+                        <p class="absolute -top-5 hidden text-thunder">Inbox</p>
+                        <IconChat class="relatvive w-14 z-0" v-if="!isChatBox" />
+                        <IconChatactive class="relatvive w-14 z-0" v-if="isChatBox" />
+                    </div>
+                    <div class="w-14 z-50 relative -translate-y-1 transition-all ease-in-out icon3" @click="thunderOpen()">
+                        <IconThunder class="w-14" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="w-full bg-primary p-3 text-white text-xs">
+            <div class="flex justify-center">
+                <p>Copyright &copy; riyo</p>
+            </div>
+        </footer>
     </div>
 </template>
 
