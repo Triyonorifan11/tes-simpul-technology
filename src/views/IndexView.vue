@@ -14,6 +14,9 @@ export default {
     data() {
         return {
             isChatBox: false,
+            isLoading: false,
+            chats: [],
+            chatsFilter: [],
         }
     },
     mounted() {
@@ -30,7 +33,7 @@ export default {
             })
         },
 
-        openChatbox() {
+        async openChatbox() {
             const textthunder = document.querySelectorAll(".text-thunder")
             document.querySelector(".icon2").classList.remove("translate-x-14");
             document.querySelector(".icon1").classList.remove("translate-x-28");
@@ -40,8 +43,36 @@ export default {
             textthunder.forEach(item => {
                 item.classList.toggle('hidden')
             })
-            this.isChatBox ? this.isChatBox = false : this.isChatBox = true
+            
+            if(this.isChatBox){
+                this.isChatBox = false;
+            }else{
+                await this.getChat();
+                this.isChatBox = true;
+            }
+        },
+
+        async getChat(){
+            this.isLoading=true;
+            const response = await fetch('data/chat.json');
+            const result = await response.json();
+            setTimeout(() => {
+                this.isLoading=false;
+                this.chats = result.data;
+                this.chatsFilter = result.data;
+                
+            }, 200)
+        },
+
+        filterItem(){
+            const dataChat = this.chats;
+            const search_chat = document.querySelector('#search_chat').value;
+            const filter = dataChat.filter(item => {
+                return item.from_chat.toLowerCase().includes(search_chat.toLowerCase())
+            })
+            this.chatsFilter = filter;
         }
+
 
     },
 }
@@ -70,49 +101,34 @@ export default {
                     <div class="w-full px-5 py-5">
                         <div class="py-1 px-10 rounded-md border-grey border flex max-h-10 justify-center items-center">
                             <input type="text" name="search_chat" id="search_chat" placeholder="search"
-                                class="w-full outline-none bg-transparent text-black placeholder-black">
+                                class="w-full outline-none bg-transparent text-black placeholder-black" @keyup="filterItem">
                             <div>
                                 <IconSearch fill="#333333" class="h-5 text-black" />
                             </div>
                         </div>
-                        <div class="py-1 w-full hidden">
-                            <div class="w-[100%] h-[450px] flex justify-center items-center">
-                                <IconLoading class="self-center animate-spin"/>
+                        <div class="py-1 w-full" v-if="isLoading">
+                            <div class="w-[100%] h-[450px] flex justify-center flex-wrap">
+                                <IconLoading class="self-end animate-spin block w-full"/>
+                                <span class="block">Loading Chat...</span>
                             </div>
                         </div>
-                        <div class="py-1">
-                            <ul>
+                        <div class="py-1 " v-if="!isLoading">
+                            <ul v-for="item in chatsFilter">
                                 <li class="border-b-2">
-                                    <a href="#" class="flex items-center mt-3 pb-6">
-                                        <IconGroup/>
+                                    <div href="#" class="flex items-center mt-3 pb-6 cursor-pointer">
+                                        <IconGroup v-if="item.is_group"/>
+                                        <IconPersonalchat v-if="!item.is_group" :initial="item.from_chat.charAt(0)"/>
                                         <div class="pl-3 w-[89%]">
                                             <div class="flex items-start">
-                                                <h5 class="text-base font-bold text-primary max-w-[80%]">109220-Naturalization</h5>
-                                                <span class="ml-3 text-sm">January 12,2021 19:10</span>
+                                                <h5 class="text-base font-bold text-primary max-w-[80%]">{{ item.from_chat }}</h5>
+                                                <span class="ml-3 text-sm">{{item.last_date_chat}}</span>
                                             </div>
-                                            <span class="font-bold text-grey block text-sm">Cameron Philips:</span>
-                                            <span class="text-sm">Please check this out!</span>
+                                            <span class="font-bold text-grey block text-sm" v-if="item.is_group">{{ item.last_chat.from }}:</span>
+                                            <span class="text-sm">{{ item.last_chat.chat }}</span>
                                         </div>
-                                        <div class="isNew h-3 w-3 bg-danger rounded-full"></div>
-                                    </a>
-                                </li>
-                                
-                                <li class="border-b-2">
-                                    <a href="#" class="flex items-center mt-3 pb-6">
-                                        <IconPersonalchat initial="F"/>
-                                        <div class="pl-3 w-[89%]">
-                                            <div class="flex items-start">
-                                                <h5 class="text-base font-bold text-primary max-w-[80%] ">8405-Diana SALAZAR MUNGUIA</h5>
-                                                <span class="ml-3 text-sm">01/06/2021 12:19</span>
-                                            </div>
-                                            <span class="font-bold text-grey block text-sm">Cameron Phillips :</span>
-                                            <span class="text-ellipsis w-90% text-sm">I understand your initial concerns and thats very valid, Elizabeth. But you ...</span>
-                                        </div>
-                                        <!-- <div class="isNew h-3 w-3 bg-danger rounded-full"></div> -->
-                                    </a>
-                                </li>
-                                
-                                
+                                        <div class="isNew h-3 w-3 bg-danger rounded-full" v-if="!item.is_read"></div>
+                                    </div>
+                                </li>                                
                             </ul>
                         </div>
                     </div>
